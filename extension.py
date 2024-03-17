@@ -1,5 +1,5 @@
 import zipfile
-
+import os
 
 def proxies(username, password, endpoint, port):
     manifest_json = """
@@ -54,10 +54,11 @@ def proxies(username, password, endpoint, port):
     );
     """ % (endpoint, port, username, password)
 
-    extension = 'proxies_extension.zip'
-
-    with zipfile.ZipFile(extension, 'w') as zp:
-        zp.writestr("manifest.json", manifest_json)
-        zp.writestr("background.js", background_js)
-
-    return extension
+    extension = os.path.join(os.getcwd()+f"\\{endpoint}_{port}", 'proxies_extension.zip')
+    if os.path.exists(extension):
+        os.remove(extension)
+    if not os.path.exists(extension):
+        os.makedirs(os.path.dirname(extension), exist_ok=True)
+        with zipfile.ZipFile(extension, 'w') as zp:
+            zp.writestr("manifest.json", manifest_json)
+            zp.writestr("background.js", background_js)
